@@ -16,9 +16,9 @@ void parse_and_run_command(const char *command) {
     char *token = strtok_r((char *)command, " ", &save);
     
     if (token == NULL) {
-        fprintf(stderr, "Invalid command.\n");        
+        fprintf(stderr, "\nInvalid command.");        
     } else if (strcmp(token, "exit") == 0) {
-        printf("Exit status: 0\n");
+        printf("\nExit status: 0");
         exit(0);
     } else {
         if (fork() == 0) {
@@ -44,7 +44,7 @@ void parse_and_run_command(const char *command) {
                 }
         } else {
             wait(NULL);
-            printf("Exit status: 0\n");
+            printf("\nExit status: 0");
         }    
     }
 }
@@ -53,7 +53,7 @@ int main(void) {
     char line[MAX_LINE];
 
     while (1) {
-        printf("\n> ");
+        printf("> ");
         fflush(stdout);
         if (fgets(line, sizeof(line), stdin) == NULL)
             break;

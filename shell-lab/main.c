@@ -15,7 +15,6 @@ void parse_and_run_command(const char *command) {
     int MAX_ARGS = 64;
     char *token = strtok_r((char *)command, " ", &save);
     
-    printf("command: %s\n", token);
     if (token == NULL) {
         fprintf(stderr, "Invalid command.\n");        
     } else if (strcmp(token, "exit") == 0) {

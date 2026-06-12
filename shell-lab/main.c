@@ -14,7 +14,8 @@ void parse_and_run_command(const char *command) {
     char* save;
     int MAX_ARGS = 64;
     char *token = strtok_r((char *)command, " ", &save);
-
+    
+    printf("command: %s\n", token);
     if (token == NULL) {
         fprintf(stderr, "Invalid command.\n");        
     } else if (strcmp(token, "exit") == 0) {
@@ -53,7 +54,7 @@ int main(void) {
     char line[MAX_LINE];
 
     while (1) {
-        printf("> ");
+        printf("\n> ");
         fflush(stdout);
         if (fgets(line, sizeof(line), stdin) == NULL)
             break;

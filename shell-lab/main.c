@@ -18,6 +18,7 @@ void parse_and_run_command(const char *command) {
     if (token == NULL) {
         fprintf(stderr, "Invalid command.\n");        
     } else if (strcmp(token, "exit") == 0) {
+        printf("Exit status: 0\n");
         exit(0);
     } else {
         if (fork() == 0) {
@@ -43,6 +44,7 @@ void parse_and_run_command(const char *command) {
                 }
         } else {
             wait(NULL);
+            printf("Exit status: 0\n");
         }    
     }
 }

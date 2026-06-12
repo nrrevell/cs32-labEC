@@ -16,9 +16,9 @@ void parse_and_run_command(const char *command) {
     char *token = strtok_r((char *)command, " ", &save);
     
     if (token == NULL) {
-        fprintf(stderr, "\nInvalid command.");        
+        fprintf(stderr, "\nInvalid command.\n");        
     } else if (strcmp(token, "exit") == 0) {
-        printf("\nExit status: 0");
+        printf("\nExit status: 0\n");
         exit(0);
     } else {
         if (fork() == 0) {
@@ -40,11 +40,11 @@ void parse_and_run_command(const char *command) {
             args[argc] = NULL; // null-terminate the array
 
             if (execve(cmd, args, NULL) == -1) {
-                    fprintf(stderr, "Invalid command.\n");
+                    fprintf(stderr, "\nInvalid command.\n");
                 }
         } else {
             wait(NULL);
-            printf("\nExit status: 0");
+            printf("\nExit status: 0\n");
         }    
     }
 }

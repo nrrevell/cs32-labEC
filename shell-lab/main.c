@@ -8,10 +8,10 @@
 #define MAX_LINE 101
 
 void parse_and_run_command(const char *command) {
-    char* save;
     /* TODO: Implement this.
        Note that this is not the correct way to test for the exit command.
        For example the command "  exit  " should also exit your shell. */
+    char* save;
     int MAX_ARGS = 64;
     char *token = strtok_r((char *)command, " ", &save);
 
@@ -20,7 +20,7 @@ void parse_and_run_command(const char *command) {
     } else if (strcmp(token, "exit") == 0) {
         exit(0);
     } else {
-        if (fork() != 0) {
+        if (fork() == 0) {
             char *args[MAX_ARGS];
             int argc = 0;
 

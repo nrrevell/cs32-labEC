@@ -18,7 +18,7 @@ void parse_and_run_command(const char *command) {
     if (token == NULL) {
         fprintf(stderr, "\nInvalid command.\n");        
     } else if (strcmp(token, "exit") == 0) {
-        printf("\nExit status: 0\n");
+        //printf("\nExit status: 0\n");
         exit(0);
     } else {
         if (fork() == 0) {

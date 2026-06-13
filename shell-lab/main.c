@@ -33,8 +33,8 @@ void parse_and_run_command(const char *command) {
             argc = 1;
             char* redirect_out = NULL;
             char* redirect_in = NULL;
-            char* file_out;
-            char* file_in;
+            char* file_out = NULL;
+            char* file_in = NULL;
                     
             // Remaining tokens are arguments
             token = strtok_r(NULL, " ", &save);
@@ -46,12 +46,21 @@ void parse_and_run_command(const char *command) {
                     if(strcmp(token, "<") == 0) {
                         redirect_in = token;
                         file_in = strtok_r(NULL, " ", &save);
+                        if (access(file_in, F_OK) == -1) {
+                            fprintf(stderr, "invalid command.\n");
+                            kill(getppid(), SIGKILL);
+                            exit(0);
+                        }                    
                     }
                     if(strcmp(token, ">") == 0) {
                         redirect_out = token;
                         file_out = strtok_r(NULL, " ", &save);
+                        if (access(file_out, F_OK) == -1) {
+                            fprintf(stderr, "invalid command.\n");
+                            kill(getppid(), SIGKILL);
+                            exit(0);
+                        }
                     }
-                    //printf(file);
                     token = strtok_r(NULL, " ", &save);
                 } else {
                     args[argc] = token;
@@ -79,7 +88,7 @@ void parse_and_run_command(const char *command) {
                     perror("Open failed");
                     exit(1);
                 }
-                if (dup2(fd, STDOUT_FILENO) < 0) {
+                if (dup2(fd, STDIN_FILENO) < 0) {
                     perror("dup2 failed");
                     exit(1);
                 }

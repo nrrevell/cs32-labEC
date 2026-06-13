@@ -59,7 +59,6 @@ int main(void) {
             break;
         line[strcspn(line, "\n")] = '\0';
         parse_and_run_command(line);
-        wait(NULL);
     }
 
     return 0;

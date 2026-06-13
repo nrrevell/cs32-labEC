@@ -4,6 +4,8 @@
 #include <string.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <errno.h>
+#include <fcntl.h>
 
 #define MAX_LINE 101
 
@@ -29,19 +31,43 @@ void parse_and_run_command(const char *command) {
             char *cmd = token;
             args[0] = cmd;
             argc = 1;
-
+            char* redirect = NULL;
+            char* file;
+            
             // Remaining tokens are arguments
             token = strtok_r(NULL, " ", &save);
             while (token && argc < MAX_ARGS - 1) {
-                args[argc] = token;
-                token = strtok_r(NULL, " ", &save);
-                argc++;
+                if (strcmp(token, ">") == 0 || strcmp(token, "<") == 0) {
+                    //printf("REDIRECTOR FOUND: ");
+                    //unless a token is > or <, then it's a redirect
+                    redirect = token;
+                    //and the next token is a file
+                    file = strtok_r(NULL, " ", &save);
+                    printf(file);
+                    token = strtok_r(NULL, " ", &save);
+                } else {
+                    args[argc] = token;
+                    token = strtok_r(NULL, " ", &save);
+                    argc++;
+                }
+
             }
             args[argc] = NULL; // null-terminate the array
-
+            if (redirect != NULL) {
+                int fd = open (file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+                if (fd < 0) {
+                    perror("Open failed");
+                    exit(1);
+                }
+                if (dup2(fd, STDOUT_FILENO) < 0) {
+                    perror("dup2 failed");
+                    exit(1);
+                }
+                close(fd);
+            }
             if (execve(cmd, args, NULL) == -1) {
                     fprintf(stderr, "\ninvalid command.\n");
-                }
+            }
         } else {
             wait(NULL);
             printf("\nExit status: 0.\n");

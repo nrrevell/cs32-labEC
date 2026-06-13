@@ -31,19 +31,27 @@ void parse_and_run_command(const char *command) {
             char *cmd = token;
             args[0] = cmd;
             argc = 1;
-            char* redirect = NULL;
-            char* file;
-            
+            char* redirect_out = NULL;
+            char* redirect_in = NULL;
+            char* file_out;
+            char* file_in;
+                    
             // Remaining tokens are arguments
             token = strtok_r(NULL, " ", &save);
             while (token && argc < MAX_ARGS - 1) {
                 if (strcmp(token, ">") == 0 || strcmp(token, "<") == 0) {
                     //printf("REDIRECTOR FOUND: ");
                     //unless a token is > or <, then it's a redirect
-                    redirect = token;
                     //and the next token is a file
-                    file = strtok_r(NULL, " ", &save);
-                    printf(file);
+                    if(strcmp(token, "<") == 0) {
+                        redirect_in = token;
+                        file_in = strtok_r(NULL, " ", &save);
+                    }
+                    if(strcmp(token, ">") == 0) {
+                        redirect_out = token;
+                        file_out = strtok_r(NULL, " ", &save);
+                    }
+                    //printf(file);
                     token = strtok_r(NULL, " ", &save);
                 } else {
                     args[argc] = token;
@@ -53,8 +61,8 @@ void parse_and_run_command(const char *command) {
 
             }
             args[argc] = NULL; // null-terminate the array
-            if (redirect != NULL) {
-                int fd = open (file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+            if (redirect_out != NULL) {
+                int fd = open (file_out, O_WRONLY | O_CREAT | O_TRUNC, 0644);
                 if (fd < 0) {
                     perror("Open failed");
                     exit(1);
@@ -65,6 +73,19 @@ void parse_and_run_command(const char *command) {
                 }
                 close(fd);
             }
+            if (redirect_in != NULL) {
+                int fd = open (file_in, O_RDONLY | O_TRUNC, 0644);
+                if (fd < 0) {
+                    perror("Open failed");
+                    exit(1);
+                }
+                if (dup2(fd, STDOUT_FILENO) < 0) {
+                    perror("dup2 failed");
+                    exit(1);
+                }
+                close(fd);
+            }            
+
             if (execve(cmd, args, NULL) == -1) {
                     fprintf(stderr, "invalid command.\n");
                     exit(1);
